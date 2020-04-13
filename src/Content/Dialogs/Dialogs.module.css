@@ -1,0 +1,29 @@
+.dialogs {
+    display: grid;
+    grid-template-areas: "d m";
+    grid-template-columns: 3fr 9fr;
+}
+
+.dialogsItems {
+    grid-area: d;
+    margin: 10px;
+}
+
+.active {
+    color: blueviolet;
+}
+
+.user {
+
+}
+
+.messages {
+    grid-area: m;
+    margin: 10px;
+}
+
+.message {
+
+}
+
+
