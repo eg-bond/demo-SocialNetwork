@@ -1,5 +1,5 @@
 import React from 'react'
-import {connect} from "react-redux";
+import {connect, DefaultRootState} from "react-redux";
 import {
     follow,
     unfollow,
@@ -7,7 +7,6 @@ import {
 } from "../../Redux/usersReduser";
 import Users from "./Users";
 import Preloader from "../../Templates/Preloader/Preloader";
-import {API} from "../../api/api";
 import {withAuthRedirect} from "../../hoc/withAuthRedirect";
 import {compose} from "redux";
 import {
@@ -18,27 +17,41 @@ import {
     getTotalUsersCount,
     getUsersSuperSelector
 } from "../../Redux/users-selectors";
+import {UsersType} from "../../types/types";
+import {AppStateType} from "../../Redux/redux-store";
+
+type MapStatePropsType = {
+    totalUsersCount: number
+    pageSize: number
+    currentPage: number
+    users: Array<UsersType>
+    followingInProgress: Array<number>
+    isFetching: boolean
+}
+type MapDispatchPropsType = {
+    unfollow: (userId: number) => void
+    follow: (userId: number) => void
+    getUsers: (currentPage: number, pageSize: number) => void
+}
+type OwnPropsType = {
+    pageTitle: string
+}
+type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType
 
 
-
-class UsersContainer extends React.Component {
+class UsersContainer extends React.Component<PropsType> {
 
     componentDidMount() {
         this.props.getUsers(this.props.currentPage, this.props.pageSize) // санка
-        // this.props.toggleIsFetching(true);
-        // API.getUsers(this.props.currentPage, this.props.pageSize).then(data => {
-        //         this.props.toggleIsFetching(false);
-        //         this.props.setUsers(data.items);
-        //         this.props.setTotalUsersCount(data.totalCount);
-        //     });
     }
 
-    onPageChanged = (pageNumber) => {
+    onPageChanged = (pageNumber: number) => {
         this.props.getUsers(pageNumber, this.props.pageSize) // санка
     }
 
     render() {
         return <>
+            <h2>{this.props.pageTitle}</h2>
             { this.props.isFetching ? <Preloader /> : null }
             <Users users={this.props.users}
                    totalUsersCount={this.props.totalUsersCount}
@@ -52,7 +65,7 @@ class UsersContainer extends React.Component {
     }
 }
 
-let mapStateToProps = (state) => { //state берется из замыкания, state это store
+let mapStateToProps = (state: AppStateType): MapStatePropsType => { //state берется из замыкания, state это store
     return {
         // users: getUsers(state),
         users: getUsersSuperSelector(state),
@@ -64,13 +77,8 @@ let mapStateToProps = (state) => { //state берется из замыкани�
     }
 }
 
-
-
-//рефакторинг mapDispatchToProps:
-let mapDispatchToPropsObject = {follow, unfollow, getUsers: getUsersThunkCreator}
-
-
 export default compose(
-    connect(mapStateToProps, mapDispatchToPropsObject),
+    connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(
+        mapStateToProps,{follow, unfollow, getUsers: getUsersThunkCreator}),
     withAuthRedirect
 )(UsersContainer);

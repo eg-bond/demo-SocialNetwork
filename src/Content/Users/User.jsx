@@ -2,8 +2,19 @@ import React from 'react'
 import s from "./Users.module.css";
 import userPhoto from "../../Assets/userPhoto.png";
 import {NavLink} from "react-router-dom";
-import {togglefollowingInProgerss} from "../../Redux/usersReduser";
+// import {togglefollowingInProgerss} from "../../Redux/usersReduser";
+import {UsersType} from "../../types/types";
 
+// type UserType = {
+//     id: number
+// }
+//
+// type PropsType = {
+//     user: Array<UserType>
+//     followingInProgress: Array<number>
+//     unfollow: (userId: number) => void
+//     follow: (userId: number) => void
+// }
 
 let User = (props) => {
     let user = props.user;

@@ -1,32 +1,42 @@
 const UPDATE_NEW_MESSAGE_TEXT = 'UPDATE-NEW-MESSAGE-TEXT';
 const SEND_MESSAGE = 'SEND_MESSAGE';
 
+type DialogType = {
+    id: number,
+    name: string
+}
+type MessageType = {
+    id: number,
+    message: string
+}
+
 let initialState = {
     dialogs: [
         {id: 1, name: 'Volodya'},
         {id: 2, name: 'Ilon Mask'},
         {id: 3, name: 'Alexey Panin'},
         {id: 4, name: 'Yuri Dudb'}
-    ],
+    ] as Array<DialogType>,
     messages: [
         {id: 1, message: 'Мемасик'},
         {id: 2, message: 'Очень смешной мемасик'},
         {id: 3, message: 'Ссылка на новый выпуск "что было дальше"'},
         {id: 4, message: 'Че сука игнор? ))'}
-    ],
+    ] as Array<MessageType>,
     newMessageText: ''
 }
 
-const dialogsReduser = (state = initialState, action) => {
+export type InitialStateType = typeof initialState
+
+const dialogsReduser = (state = initialState, action: ActionsTypes): InitialStateType => {
 
     switch (action.type) {
         case SEND_MESSAGE:
-            // let newMessage = state.newMessageText;
             let length = state.messages.length + 1;
             return {
                 ...state,
                 newMessageText: '',
-                messages: [...state.messages, {id: length, message: action.messageText}]
+                messages: [...state.messages, {id: length, message: action.messageText}],
             }
         case UPDATE_NEW_MESSAGE_TEXT:
             return {
@@ -38,18 +48,12 @@ const dialogsReduser = (state = initialState, action) => {
     }
 }
 
-export const sendMessage = (messageText) => {
-    return {
-        type: SEND_MESSAGE,
-        messageText
-    }
-}
+type ActionsTypes = sendMessageActionType | updateMessageActionType
 
-export const updateNewMessage = (messageText) => {
-    return {
-        type: UPDATE_NEW_MESSAGE_TEXT,
-        messageText: messageText
-    }
-}
+type sendMessageActionType = {type: typeof SEND_MESSAGE, messageText: string}
+export const sendMessage = (messageText: string): sendMessageActionType => ({type: SEND_MESSAGE, messageText})
 
-export default dialogsReduser;
+type updateMessageActionType = {type: typeof UPDATE_NEW_MESSAGE_TEXT, messageText: string}
+export const updateNewMessage = (messageText: string): updateMessageActionType => ({type: UPDATE_NEW_MESSAGE_TEXT, messageText})
+
+export default dialogsReduser
